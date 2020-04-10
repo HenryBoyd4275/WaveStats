@@ -1,8 +1,9 @@
-import React from 'react';
-import { Grommet, Form, FormField, Button, } from 'grommet';
+import React, { useState } from 'react';
+import { Grommet, Form, FormField, Button, DataTable, Text} from 'grommet';
 
 function App() {
     let counter = 0;
+    const [outputs, setOutputs] = useState([0]);
 
     let results = {};
 
@@ -16,11 +17,14 @@ function App() {
         let shoalingWaveLength = deepWaterWaveLength;
         let depth = Math.trunc(((9.806 * inputValues.period * inputValues.period) / 6.2832) / 2);
         calculate(inputValues, shoalingWaveLength, depth, deepWaterWaveLength);
+        counter = 0;
+        setOutputs(Object.values(results));
+        console.log("o.v", Object.values(results),"outputs", outputs);
     }
 
     function calculate(inputValues, shoalingWaveLength, depth, deepWaterWaveLength) {
         counter += 1;
-        console.log("inputs", inputValues);
+        //console.log("inputs", inputValues);
        
         const waveNumber = 6.2832 * shoalingWaveLength;
         const waveVelocityRatio = (1 + ((2 * waveNumber * depth) / Math.sinh(2 * waveNumber * depth))) / 2
@@ -54,10 +58,9 @@ function App() {
 
         depth = depth - inputValues.increment;
 
-        console.log("results", results);
+        //console.log("results", results);
 
         if (inputValues.height < depth) {
-            console.log("here");
             calculate(inputValues, shoalingWaveLength, depth, deepWaterWaveLength)
         }
     }
@@ -75,23 +78,47 @@ function App() {
                 <FormField name="increment" required={true} label="Desired Depth Increments in metres" />
                 <Button type="submit" primary label="Submit" />
             </Form>
+            <DataTable
+                columns={[
+                    {
+                        property: 'depth',
+                        header: <Text>Depth</Text>,
+                    },
+                    {
+                        property: 'shoalingWaveAngle',
+                        header: 'Angle',
+                    },
+                    {
+                        property: 'shoalingWaveLength',
+                        header: 'Shoaling Wave Length',
+                    },
+                    {
+                        property: 'shoalingWaveHeight',
+                        header: 'Shoaling Wave Height',
+                    },
+                    {
+                        property: 'orbitalAmplitude',
+                        header: 'Orbital Amplitude',
+                    },
+                    {
+                        property: 'orbitalVelocity',
+                        header: 'Orbital Velocity',
+                    },
+                    {
+                        property: 'waveReynoldsNumber',
+                        header: 'Wave Reynolds Number',
+                    },
+                    {
+                        property: 'diameter',
+                        header: 'Diameter',
+                    },
+                ]}
+                data={outputs}
+            />
         </Grommet>
     );
 }
 
 export default App;
 
-/*<DataTable
-    columns={[
-        {
-            property: 'name',
-            header: <Text>Output</Text>,
-            primary: true,
-        },
-        {
-            property: 'percent',
-            header: 'Value',
-        },
-    ]}
-    data={outputs}
-/>*/
+/**/
