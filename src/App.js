@@ -13,27 +13,25 @@ function App() {
             angle: inputValues.angle / 57.2958
         }
 
-        let deepWaterWaveLength = (9.806 * inputValues.period * inputValues.period) / 6.2832;
+        let deepWaterWaveLength = (9.806 * (inputValues.period * inputValues.period)) / 6.2832;
         let shoalingWaveLength = deepWaterWaveLength;
-        let depth = Math.trunc(((9.806 * inputValues.period * inputValues.period) / 6.2832) / 2);
+        let depth = Math.trunc(deepWaterWaveLength / 2);
         calculate(inputValues, shoalingWaveLength, depth, deepWaterWaveLength);
         counter = 0;
         setOutputs(Object.values(results));
-        console.log("o.v", Object.values(results),"outputs", outputs);
     }
 
     function calculate(inputValues, shoalingWaveLength, depth, deepWaterWaveLength) {
         counter += 1;
-        //console.log("inputs", inputValues);
        
-        const waveNumber = 6.2832 * shoalingWaveLength;
+        const waveNumber = 6.2832 / shoalingWaveLength;
         const waveVelocityRatio = (1 + ((2 * waveNumber * depth) / Math.sinh(2 * waveNumber * depth))) / 2
-        shoalingWaveLength = (shoalingWaveLength * Math.tanh(6.2832 * depth / shoalingWaveLength));
-        const shoalingWaveAngle = Math.asin((shoalingWaveLength / depth) * Math.sin(inputValues.angle));
-        const refractionCoefficient = Math.sqrt(Math.cos(inputValues.angle) / Math.cos(shoalingWaveAngle));
-        inputValues.angle = shoalingWaveAngle;
+        shoalingWaveLength = deepWaterWaveLength * Math.tanh(6.2832 * depth / shoalingWaveLength);
+        const shoalingWaveAngle = Math.asin((shoalingWaveLength / deepWaterWaveLength) * Math.sin(inputValues.angle)); //fine but input is zero so of course it is
+        const refractionCoefficient = Math.sqrt(Math.cos(inputValues.angle) / Math.cos(shoalingWaveAngle)); //do I even use this rn?
+        inputValues.angle = shoalingWaveAngle; //need to test if this actually updates the value for next iteration
         const shoalingWaveHeight = inputValues.height * (Math.sqrt(deepWaterWaveLength / (shoalingWaveLength * 2 * waveVelocityRatio))) * refractionCoefficient;
-        const orbitalAmplitude = shoalingWaveHeight / (Math.sinh(6.2832 * depth / shoalingWaveLength));//off by a decimal place
+        const orbitalAmplitude = shoalingWaveHeight / (Math.sinh(6.2832 * depth / shoalingWaveLength));
         const orbitalVelocity = 3.14159 * orbitalAmplitude / inputValues.period;
         let diameter = ((orbitalVelocity * orbitalVelocity) / (3.3957 * Math.sqrt(orbitalAmplitude))) * ((orbitalVelocity * orbitalVelocity) / (3.3957 * Math.sqrt(orbitalAmplitude)))
         if (diameter > 0.0005) {
@@ -47,18 +45,16 @@ function App() {
             [counter]: {
                 depth,
                 shoalingWaveAngle,
-                shoalingWaveLength,
-                shoalingWaveHeight,
-                orbitalAmplitude,
-                orbitalVelocity,
-                waveReynoldsNumber,
-                diameter
+                shoalingWaveLength: Math.round(shoalingWaveLength * 100) / 100,
+                shoalingWaveHeight: Math.round(shoalingWaveHeight * 100) / 100,
+                orbitalAmplitude: Math.round(orbitalAmplitude * 100) / 100,
+                orbitalVelocity: Math.round(orbitalVelocity * 100) / 100,
+                waveReynoldsNumber: Math.round(waveReynoldsNumber),
+                diameter: Math.round(diameter * 100) / 100
             }
         }
 
         depth = depth - inputValues.increment;
-
-        //console.log("results", results);
 
         if (inputValues.height < depth) {
             calculate(inputValues, shoalingWaveLength, depth, deepWaterWaveLength)
