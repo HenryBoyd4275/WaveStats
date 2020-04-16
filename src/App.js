@@ -66,7 +66,7 @@ function App() {
     }
 
     function parseJSONToCSVStr(jsonData) {
-        if (jsonData.length == 0) {
+        if (jsonData.length === 0) {
             return '';
         }
 
@@ -112,11 +112,11 @@ function App() {
                 </header>
                 <Box fill={false} flex={"grow"} align={"start"} background={"background-front"} round={"medium"} margin={"medium"} border={{ style: 'solid', size: 'large', color: 'border' }}>
                     <Form onSubmit={(submits) => submit(submits.value)}>
-                        <FormField name="height" required={true} label="Deep Water Wave Height in Meters" />
-                        <FormField name="period" required={true} label="Wave Period in Seconds" />
-                        <FormField name="angle" required={true} label="Deep Water Incident Wave Angle in Degrees" />
-                        <FormField name="increment" required={true} label="Desired Depth Increments in metres" />
-                        <Button margin={"small"} type="submit" primary label="Submit" />
+                        <FormField name="height" required={true} validate={(fieldData) => { if (isNaN(fieldData) || fieldData < 0) { return "Entry must be a positive number" }}} label="Deep Water Wave Height in Meters" />
+                        <FormField name="period" required={true} validate={(fieldData) => { if (isNaN(fieldData) || fieldData < 0) { return "Entry must be a positive number" }}} label="Wave Period in Seconds" />
+                        <FormField name="angle" required={false} validate={(fieldData) => { if (isNaN(fieldData) || fieldData < 0) { return "Entry must be a positive number" }}} label="Deep Water Incident Wave Angle in Degrees" />
+                        <FormField name="increment" required={true} validate={(fieldData) => { if (isNaN(fieldData) || fieldData < 0) { return "Entry must be a positive number" }}} label="Desired Depth Increments in metres" />
+                        <Button margin={"small"} plain={false} color={"text"} type="submit" label="Submit" />
                     </Form>
                 </Box>
                 
@@ -154,7 +154,7 @@ function App() {
                         ]}
                         data={outputs}
                     />
-                    <Button margin={"small"} primary label="Download" onClick={downloadClicked}/>
+                    <Button margin={"small"} color={"text"} label="Download" onClick={downloadClicked}/>
                 </Box>
              </Box>
         </Grommet>
