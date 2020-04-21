@@ -8,10 +8,30 @@ function App() {
     const [outputs, setOutputs] = useState([0]);
     const [landOrWater, setLandOrWater] = useState('Land');
 
-
     let results = {};
 
-    function submit(inputValues) {
+    function getWindPow() {
+        if (landOrWater === "Land") {
+            return 0.14;
+        } else if (landOrWater === "Water") {
+            return 0.1;
+        } else {
+            console.log("null");
+            return null;
+        }
+    }
+
+    function windSubmit(inputValues) {
+        console.log("you submitted:", inputValues);
+
+        const windSpeedAtTenMetres = inputValues.windSpeed * Math.pow(10 / inputValues.heightOfWindMeasure, getWindPow());
+        const height = 0.01616 * windSpeedAtTenMetres * Math.pow(inputValues.fetch, 0.5);
+        const period = 0.6238 * Math.pow(windSpeedAtTenMetres * inputValues.fetch, 0.33);
+
+        console.log("windAtTen:", windSpeedAtTenMetres, "height:", height, "period:", period);
+    }
+
+    function waveSubmit(inputValues) {
         inputValues = {
             ...inputValues,
             angle: inputValues.angle / 57.2958
@@ -113,10 +133,10 @@ function App() {
 
                 <Box direction="row">
                     <Box fill={false} flex={"grow"} align={"start"} background={"background-front"} round={"medium"} margin={"medium"} border={{ style: 'solid', size: 'large', color: 'border' }}>
-                        <Form onSubmit={console.log("you pressed wind submit but it doesn't do anthing yet")}>
-                            <FormField name="wind speed" required={true} validate={(fieldData) => { if (isNaN(fieldData) || fieldData < 0) { return "Entry must be a positive number" } }} label="Wind Speed in Meters per Second" />
+                        <Form onSubmit={(submits) => windSubmit(submits.value)}>
+                            <FormField name="windSpeed" required={true} validate={(fieldData) => { if (isNaN(fieldData) || fieldData < 0) { return "Entry must be a positive number" } }} label="Wind Speed in Meters per Second" />
                             <FormField name="fetch" required={true} validate={(fieldData) => { if (isNaN(fieldData) || fieldData < 0) { return "Entry must be a positive number" } }} label="Fetch in Kilometres" />
-                            <FormField name="height of wind measure" required={false} validate={(fieldData) => { if (isNaN(fieldData) || fieldData < 0) { return "Entry must be a positive number" } }} label="Height of Wind Speed Measurement in Metres" />
+                            <FormField name="heightOfWindMeasure" required={false} validate={(fieldData) => { if (isNaN(fieldData) || fieldData < 0) { return "Entry must be a positive number" } }} label="Height of Wind Speed Measurement in Metres" />
                             <Text>Wind Speed was Measured Over:</Text>
                             <RadioButtonGroup
                                 name="land or water"
@@ -128,7 +148,7 @@ function App() {
                         </Form>
                     </Box>
                     <Box fill={false} flex={"grow"} align={"start"} background={"background-front"} round={"medium"} margin={"medium"} border={{ style: 'solid', size: 'large', color: 'border' }}>
-                        <Form onSubmit={(submits) => submit(submits.value)}>
+                        <Form onSubmit={(submits) => waveSubmit(submits.value)}>
                             <FormField name="height" required={true} validate={(fieldData) => { if (isNaN(fieldData) || fieldData < 0) { return "Entry must be a positive number" }}} label="Deep Water Wave Height in Meters" />
                             <FormField name="period" required={true} validate={(fieldData) => { if (isNaN(fieldData) || fieldData < 0) { return "Entry must be a positive number" }}} label="Wave Period in Seconds" />
                             <FormField name="angle" required={false} validate={(fieldData) => { if (isNaN(fieldData) || fieldData < 0) { return "Entry must be a positive number" }}} label="Deep Water Incident Wave Angle in Degrees" />
