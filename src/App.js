@@ -7,6 +7,7 @@ function App() {
     let counter = 0;
     const [outputs, setOutputs] = useState([0]);
     const [landOrWater, setLandOrWater] = useState('Land');
+    const [waveValue, setWaveValue] = useState();
 
     let results = {};
 
@@ -24,11 +25,13 @@ function App() {
     function windSubmit(inputValues) {
         console.log("you submitted:", inputValues);
 
-        const windSpeedAtTenMetres = inputValues.windSpeed * Math.pow(10 / inputValues.heightOfWindMeasure, getWindPow());
-        const height = 0.01616 * windSpeedAtTenMetres * Math.pow(inputValues.fetch, 0.5);
-        const period = 0.6238 * Math.pow(windSpeedAtTenMetres * inputValues.fetch, 0.33);
+        const windSpeedAtTenMetres = (inputValues.windSpeed / 3.6 ) * Math.pow(10 / inputValues.heightOfWindMeasure, getWindPow()); //also convers to metres per second
+        const height = '' + Math.round( 0.01616 * windSpeedAtTenMetres * Math.pow(inputValues.fetch, 0.5) * 100) / 100;
+        const period = '' + Math.round( 0.6238 * Math.pow(windSpeedAtTenMetres * inputValues.fetch, 0.33) * 100) / 100;
 
         console.log("windAtTen:", windSpeedAtTenMetres, "height:", height, "period:", period);
+        setWaveValue({ ...waveValue, height, period });
+        console.log("formState", waveValue);
     }
 
     function waveSubmit(inputValues) {
@@ -51,9 +54,9 @@ function App() {
         const waveNumber = 6.2832 / shoalingWaveLength;
         const waveVelocityRatio = (1 + ((2 * waveNumber * depth) / Math.sinh(2 * waveNumber * depth))) / 2
         shoalingWaveLength = deepWaterWaveLength * Math.tanh(6.2832 * depth / shoalingWaveLength);
-        const shoalingWaveAngle = Math.asin((shoalingWaveLength / deepWaterWaveLength) * Math.sin(inputValues.angle)); //untested against real data
+        const shoalingWaveAngle = Math.asin((shoalingWaveLength / deepWaterWaveLength) * Math.sin(inputValues.angle));
         const refractionCoefficient = Math.sqrt(Math.cos(inputValues.angle) / Math.cos(shoalingWaveAngle));
-        inputValues.angle = shoalingWaveAngle; //also needs some testing
+        inputValues.angle = shoalingWaveAngle;
         const shoalingWaveHeight = inputValues.height * (Math.sqrt(deepWaterWaveLength / (shoalingWaveLength * 2 * waveVelocityRatio))) * refractionCoefficient;
         const orbitalAmplitude = shoalingWaveHeight / (Math.sinh(6.2832 * depth / shoalingWaveLength));
         const orbitalVelocity = 3.14159 * orbitalAmplitude / inputValues.period;
@@ -62,7 +65,6 @@ function App() {
             diameter = Math.pow((orbitalVelocity * orbitalVelocity) / (23.3678 * Math.pow(orbitalAmplitude, 0.25)), 1.3333)
         }
         diameter = diameter * 1000;
-        //const waveReynoldsNumber = (orbitalAmplitude * orbitalVelocity) * (Math.pow(10, 6)) // no longer in project scope
 
         results = {
             ...results,
@@ -73,7 +75,6 @@ function App() {
                 shoalingWaveHeight: Math.round(shoalingWaveHeight * 100) / 100,
                 orbitalAmplitude: Math.round(orbitalAmplitude * 100) / 100,
                 orbitalVelocity: Math.round(orbitalVelocity * 100) / 100,
-                //waveReynoldsNumber: Math.round(waveReynoldsNumber), // no longer in project scope
                 diameter: Math.round(diameter * 100) / 100
             }
         }
@@ -131,15 +132,16 @@ function App() {
                     <h1>Wave Calculator</h1>
                 </header>
 
-                <Box direction="row">
+                <Box flex={'grow'} direction="row">
                     <Box fill={false} flex={"grow"} align={"start"} background={"background-front"} round={"medium"} margin={"medium"} border={{ style: 'solid', size: 'large', color: 'border' }}>
                         <Form onSubmit={(submits) => windSubmit(submits.value)}>
-                            <FormField name="windSpeed" required={true} validate={(fieldData) => { if (isNaN(fieldData) || fieldData < 0) { return "Entry must be a positive number" } }} label="Wind Speed in Meters per Second" />
+                            <FormField name="windSpeed" required={true} validate={(fieldData) => { if (isNaN(fieldData) || fieldData < 0) { return "Entry must be a positive number" } }} label="Wind Speed in Kilometres Per Hour" />
                             <FormField name="fetch" required={true} validate={(fieldData) => { if (isNaN(fieldData) || fieldData < 0) { return "Entry must be a positive number" } }} label="Fetch in Kilometres" />
                             <FormField name="heightOfWindMeasure" required={false} validate={(fieldData) => { if (isNaN(fieldData) || fieldData < 0) { return "Entry must be a positive number" } }} label="Height of Wind Speed Measurement in Metres" />
-                            <Text>Wind Speed was Measured Over:</Text>
+                            <Text margin={"small"} > Wind Speed was Measured Over:</Text>
                             <RadioButtonGroup
                                 name="land or water"
+                                margin={'small'}
                                 options={['Land', 'Water']}
                                 value={landOrWater}
                                 onChange={(event) => setLandOrWater(event.target.value)}
@@ -148,7 +150,7 @@ function App() {
                         </Form>
                     </Box>
                     <Box fill={false} flex={"grow"} align={"start"} background={"background-front"} round={"medium"} margin={"medium"} border={{ style: 'solid', size: 'large', color: 'border' }}>
-                        <Form onSubmit={(submits) => waveSubmit(submits.value)}>
+                        <Form value={waveValue} onChange={nextValue => setWaveValue(nextValue)} onSubmit={({ value }) => waveSubmit(value)}> 
                             <FormField name="height" required={true} validate={(fieldData) => { if (isNaN(fieldData) || fieldData < 0) { return "Entry must be a positive number" }}} label="Deep Water Wave Height in Meters" />
                             <FormField name="period" required={true} validate={(fieldData) => { if (isNaN(fieldData) || fieldData < 0) { return "Entry must be a positive number" }}} label="Wave Period in Seconds" />
                             <FormField name="angle" required={false} validate={(fieldData) => { if (isNaN(fieldData) || fieldData < 0) { return "Entry must be a positive number" }}} label="Deep Water Incident Wave Angle in Degrees" />
