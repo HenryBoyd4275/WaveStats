@@ -1,10 +1,7 @@
 import React, { useState } from "react";
-import {
-  Grommet,
-  Box,
-} from "grommet";
+import { Grommet, Box, Text } from "grommet";
 import Table from "./Table.js";
-import WaveForm from "./WaveForm.js";
+import { WaveForm } from "./WaveForm.js";
 import WindForm from "./WindForm.js";
 
 const myTheme = require("./myTheme.json");
@@ -12,7 +9,6 @@ const myTheme = require("./myTheme.json");
 function App() {
   let counter = 0;
   const [outputs, setOutputs] = useState([0]);
-  
 
   let results = {};
 
@@ -100,10 +96,8 @@ function App() {
     }
 
     let keys = Object.keys(jsonData[0]);
-
     let columnDelimiter = ",";
     let lineDelimiter = "\n";
-
     let csvColumnHeader = keys.join(columnDelimiter);
     let csvStr = csvColumnHeader + lineDelimiter;
 
@@ -123,9 +117,7 @@ function App() {
   function downloadClicked() {
     let csvStr = parseJSONToCSVStr(outputs);
     let dataUri = "data:text/csv;charset=utf-8," + csvStr;
-
     let exportFileDefaultName = "data.csv";
-
     let linkElement = document.createElement("a");
     linkElement.setAttribute("href", dataUri);
     linkElement.setAttribute("download", exportFileDefaultName);
@@ -138,17 +130,11 @@ function App() {
         <header className="App-header" align={"center"}>
           <h1>Wave Calculator</h1>
         </header>
-
         <Box flex={"grow"} direction="row">
-          <WindForm/>
-          <WaveForm
-            onSubmit={(value) => waveSubmit(value)}
-          />
+          <WindForm onSubmit={(value) => waveSubmit(value)} />
+          <WaveForm onSubmit={(value) => waveSubmit(value)} />
         </Box>
-        <Table
-          onClick={() => downloadClicked()}
-          data={outputs}
-        />
+        <Table onClick={() => downloadClicked()} data={outputs} />
       </Box>
     </Grommet>
   );

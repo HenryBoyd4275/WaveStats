@@ -1,9 +1,5 @@
 {
-  "ExpandedNodes": [
-    "",
-    "\\public",
-    "\\src"
-  ],
+  "ExpandedNodes": ["", "\\public", "\\src"],
   "SelectedNode": "\\src\\WaveForm.js",
   "PreviewInSolutionExplorer": false
 }
