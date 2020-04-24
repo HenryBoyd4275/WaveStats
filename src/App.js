@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Grommet, Box, Text } from "grommet";
+import { Grommet, Box} from "grommet";
 import Table from "./Table.js";
 import { WaveForm } from "./WaveForm.js";
 import WindForm from "./WindForm.js";
@@ -127,7 +127,7 @@ function App() {
   return (
     <Grommet theme={myTheme} full>
       <Box fill>
-        <header className="App-header" align={"center"}>
+        <header className="App-header" align="center">
           <h1>Wave Calculator</h1>
         </header>
         <Box flex={"grow"} direction="row">
