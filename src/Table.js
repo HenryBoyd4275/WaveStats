@@ -19,28 +19,28 @@ export default function Table(props) {
             header: <Text>Depth</Text>,
           },
           {
-            property: "shoalingWaveAngle",
-            header: "Angle",
+            property: "shoalingWaveAngle (degrees)",
+            header: "Angle (\u00B0)",
           },
           {
-            property: "shoalingWaveLength",
-            header: "Shoaling Wave Length",
+            property: "shoalingWaveLength(m)",
+            header: "Shoaling Wave Length (m)",
           },
           {
-            property: "shoalingWaveHeight",
-            header: "Shoaling Wave Height",
+            property: "shoalingWaveHeight(m)",
+            header: "Shoaling Wave Height (m)",
           },
           {
-            property: "orbitalAmplitude",
-            header: "Orbital Amplitude",
+            property: "orbitalAmplitude(m)",
+            header: "Orbital Amplitude (m)",
           },
           {
-            property: "orbitalVelocity",
-            header: "Orbital Velocity",
+            property: "orbitalVelocity(m/s)",
+            header: "Orbital Velocity (m/s)",
           },
           {
-            property: "diameter",
-            header: "Diameter",
+            property: "diameter (mm)",
+            header: "Diameter (mm)",
           },
         ]}
         data={props.data}
