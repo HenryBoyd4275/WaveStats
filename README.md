@@ -8,6 +8,6 @@ Either the Wind Form or the Wave Form can then be filled out.
 
 The download button outputs a CSV file with the current Data Table results.
 
-Please see the [attatched background material PDF](https://github.com/HenryBoyd4275/WaveStats/blob/master/docs/Wave%20calculator%20background%20material.pdf) in docs for a more detailed explanation.
+Please see the [attached background material PDF](https://github.com/HenryBoyd4275/WaveStats/blob/master/docs/Wave%20calculator%20background%20material.pdf) in docs for a more detailed explanation.
 
 ![screenshot](https://github.com/HenryBoyd4275/WaveStats/blob/master/docs/Screenshot.PNG?raw=true)
